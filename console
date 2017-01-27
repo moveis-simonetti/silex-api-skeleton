@@ -1,0 +1,22 @@
+#!/usr/bin/env php
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+
+$app = require_once __DIR__ . '/bootstrap/app.php';
+
+$console = new \Symfony\Component\Console\Application();
+$console->setDispatcher($app['dispatcher']);
+
+$helperSet = new \Symfony\Component\Console\Helper\HelperSet([
+    'db' => new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($app['orm.em']->getConnection()),
+    'em' => new \Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper($app['orm.em'])
+]);
+$console->setHelperSet($helperSet);
+
+$console->setHelperSet($app['migrations.em_helper_set']);
+$console->addCommands($app['migrations.commands']);
+$console->add(new \Simonetti\Commands\LoadDataFixturesDoctrineCommand());
+\Doctrine\ORM\Tools\Console\ConsoleRunner::addCommands($console);
+
+
+$console->run();

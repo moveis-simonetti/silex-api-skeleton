@@ -1,0 +1,7 @@
+.env
+.idea
+/vendor
+/phpunit.xml
+/composer.lock
+/storage/logs/*
+/storage/cache/*
